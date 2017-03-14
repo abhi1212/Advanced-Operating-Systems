@@ -1,8 +1,3 @@
-<<<<<<< HEAD
 LAB=3
 PACKAGEDATE=Thu Sep 29 14:25:51 EDT 2016
-=======
-LAB=2
-PACKAGEDATE=Wed Sep 21 11:13:24 EDT 2016
-
->>>>>>> lab2
+	

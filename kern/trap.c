@@ -9,6 +9,38 @@
 #include <kern/env.h>
 #include <kern/syscall.h>
 
+
+
+
+
+#define DPLKERN 0
+#define DPLUSR 3
+void divide_zero();
+void brkpoint();
+void no_seg();
+void debug();
+void nmi();
+void oflow();
+void bound();
+void illop();
+void device();
+void dblflt();
+void tss();   
+void stack(); 
+void gpflt(); 
+void pgflt(); 
+void fperr(); 
+void align(); 
+void mchk();  
+void simderr();
+
+void syscalls();
+
+
+
+
+
+
 static struct Taskstate ts;
 
 /* For debugging, so print_trapframe can distinguish between printing
@@ -16,7 +48,7 @@ static struct Taskstate ts;
  * additional information in the latter case.
  */
 static struct Trapframe *last_tf;
-
+extern uint32_t trap_handlers[];
 /* Interrupt descriptor table.  (Must be built at run time because
  * shifted function addresses can't be represented in relocation records.)
  */
@@ -65,6 +97,29 @@ trap_init(void)
 	extern struct Segdesc gdt[];
 
 	// LAB 3: Your code here.
+	SETGATE(idt[T_DIVIDE],0,GD_KT,divide_zero,DPLKERN);    //CSS=kernel text
+    SETGATE(idt[T_BRKPT],0,GD_KT,brkpoint,DPLUSR);
+    SETGATE(idt[T_SEGNP],0,GD_KT,no_seg,DPLKERN);
+    SETGATE(idt[T_DEBUG],0,GD_KT,debug,DPLKERN);
+    SETGATE(idt[T_NMI],0,GD_KT,nmi,DPLKERN);
+    SETGATE(idt[T_OFLOW],0,GD_KT,oflow,DPLKERN);
+    SETGATE(idt[T_BOUND],0,GD_KT,bound,DPLKERN);
+    SETGATE(idt[T_ILLOP],0,GD_KT,illop,DPLKERN);
+    SETGATE(idt[T_DEVICE],0,GD_KT,device,DPLKERN);
+    SETGATE(idt[T_DBLFLT],0,GD_KT,dblflt,DPLKERN);
+    SETGATE(idt[T_TSS], 0, GD_KT, tss, DPLKERN);
+    SETGATE(idt[T_STACK], 0, GD_KT, stack, DPLKERN);
+    SETGATE(idt[T_GPFLT], 0, GD_KT, gpflt, DPLKERN);
+    SETGATE(idt[T_PGFLT], 0, GD_KT, pgflt, DPLKERN);
+    SETGATE(idt[T_FPERR], 0, GD_KT, fperr, DPLKERN);
+    SETGATE(idt[T_ALIGN], 0, GD_KT, align, DPLKERN);
+    SETGATE(idt[T_MCHK], 0, GD_KT, mchk, DPLKERN);
+    SETGATE(idt[T_SIMDERR], 0, GD_KT, simderr, DPLKERN);
+
+
+    SETGATE(idt[T_SYSCALL], 0, GD_KT, syscalls, DPLUSR);
+
+
 
 	// Per-CPU setup 
 	trap_init_percpu();
@@ -141,9 +196,33 @@ print_regs(struct PushRegs *regs)
 static void
 trap_dispatch(struct Trapframe *tf)
 {
+	int rval=0;
+		//cprintf("error interruot %x\n", tf->tf_err);
 	// Handle processor exceptions.
 	// LAB 3: Your code here.
+	if(tf->tf_trapno==14)
+       {
+        page_fault_handler(tf);
+        return;
+	}
+	
+	if(tf->tf_trapno==3)
+	{
+	monitor(tf);
+	return;	
+		
+	}
+	
+	if(tf->tf_trapno==T_SYSCALL)
+	{
+	rval= syscall(tf->tf_regs.reg_eax,tf->tf_regs.reg_edx,tf->tf_regs.reg_ecx,tf->tf_regs.reg_ebx,tf->tf_regs.reg_edi,tf->tf_regs.reg_esi);
+	tf->tf_regs.reg_eax = rval;
+	
+	return;
+	}
 
+        
+        
 	// Unexpected trap: The user process or the kernel has a bug.
 	print_trapframe(tf);
 	if (tf->tf_cs == GD_KT)
@@ -202,6 +281,8 @@ page_fault_handler(struct Trapframe *tf)
 	fault_va = rcr2();
 
 	// Handle kernel-mode page faults.
+	if((tf->tf_cs & 3)==0)
+	    panic("page fault kernel mode");
 
 	// LAB 3: Your code here.
 
