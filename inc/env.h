@@ -54,6 +54,7 @@ struct Env {
 	int env_cpunum;			// The CPU that the env is running on
 
 	// Address space
+<<<<<<< HEAD
 	pde_t *env_pgdir;		// Kernel virtual address of page dir
 
 	// Exception handling
@@ -65,6 +66,9 @@ struct Env {
 	uint32_t env_ipc_value;		// Data value sent to us
 	envid_t env_ipc_from;		// envid of the sender
 	int env_ipc_perm;		// Perm of page mapping received
+=======
+	pde_t *env_pgdir;		// Kernel virtual address of page dir, virtual address of where its page directory is.
+>>>>>>> lab3
 };
 
 #endif // !JOS_INC_ENV_H
