@@ -241,15 +241,15 @@ mem_init(void)
 	// we just set up the mapping anyway.
 	// Permissions: kernel RW, user NONE
 	// Your code goes here:
-<<<<<<< HEAD
+
 
 	// Initialize the SMP-related parts of the memory map
 	mem_init_mp();
 
-=======
+
 	uint64_t kern_map_length = 0x100000000 - (uint64_t) KERNBASE;
     boot_map_region(kern_pgdir, KERNBASE,kern_map_length ,0, PTE_W | PTE_P);
->>>>>>> lab3
+
 	// Check that the initial page directory has been set up correctly.
 	check_kern_pgdir();
 
@@ -297,7 +297,12 @@ mem_init_mp(void)
 	//     Permissions: kernel RW, user NONE
 	//
 	// LAB 4: Your code here:
-
+	uint32_t i, currstack;
+	for (i=0 ; i < NCPU; i++){
+		currstack = KSTACKTOP - i*(KSTKSIZE + KSTKGAP) - KSTKSIZE;
+		boot_map_region(kern_pgdir, currstack, KSTKSIZE, 
+PADDR(percpu_kstacks[i]), PTE_W|PTE_P);
+}
 }
 
 // --------------------------------------------------------------
@@ -338,7 +343,7 @@ page_init(void)
 	// free pages!
 	size_t i;
 	for (i = 0; i < npages; i++) {
-	if(i==0 ||(i>=(IOPHYSMEM/PGSIZE)&&i<=(((uint32_t)boot_alloc(0)-KERNBASE)/PGSIZE)))
+	if(i==0 ||(i>=(IOPHYSMEM/PGSIZE)&&i<=(((uint32_t)boot_alloc(0)-KERNBASE)/PGSIZE))||i==MPENTRY_PADDR/PGSIZE)
 	continue;
 
 		pages[i].pp_ref = 0;
@@ -377,7 +382,6 @@ page_alloc(int alloc_flags)
 
   	return tempage;
 	
-
 }
 
 //
@@ -631,7 +635,13 @@ mmio_map_region(physaddr_t pa, size_t size)
 	// Hint: The staff solution uses boot_map_region.
 	//
 	// Your code here:
-	panic("mmio_map_region not implemented");
+	size = ROUNDUP(size, PGSIZE);
+	if (base + size > MMIOLIM)
+		panic("overflow MMIOLIM\n");
+	boot_map_region(kern_pgdir, base, size, pa, PTE_P|PTE_W|PTE_PCD|PTE_PWT);
+	uintptr_t retaddr = base;
+	base += size;
+return (void *)retaddr;
 }
 
 static uintptr_t user_mem_check_addr;

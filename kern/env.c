@@ -276,6 +276,12 @@ env_alloc(struct Env **newenv_store, envid_t parent_id)
 	// Enable interrupts while in user mode.
 	// LAB 4: Your code here.
 
+	if((e->env_tf.tf_cs & 3)==3)
+	{
+		e->env_tf.tf_eflags= (e->env_tf.tf_eflags | FL_IF);
+	}
+
+
 	// Clear the page fault handler until user installs one.
 	e->env_pgfault_upcall = 0;
 
@@ -525,13 +531,16 @@ env_destroy(struct Env *e)
 	// ENV_DYING. A zombie environment will be freed the next time
 	// it traps to the kernel.
 	if (e->env_status == ENV_RUNNING && curenv != e) {
+	
 		e->env_status = ENV_DYING;
 		return;
 	}
 
 	env_free(e);
+	
 
 	if (curenv == e) {
+	
 		curenv = NULL;
 		sched_yield();
 	}
@@ -549,7 +558,8 @@ env_pop_tf(struct Trapframe *tf)
 {
 	// Record the CPU we are running on for user-space debugging
 	curenv->env_cpunum = cpunum();
-
+	
+	//panic("pop_tf");
 	asm volatile(
 		"\tmovl %0,%%esp\n"
 		"\tpopal\n"
@@ -559,6 +569,7 @@ env_pop_tf(struct Trapframe *tf)
 		"\tiret\n"
 		: : "g" (tf) : "memory");
 	panic("iret failed");  /* mostly to placate the compiler */
+	
 }
 
 //
@@ -595,17 +606,19 @@ env_run(struct Env *e)
 		if (curenv && curenv->env_status == ENV_RUNNING)
 			
 			curenv->env_status = ENV_RUNNABLE;
-		curenv = e;
+			curenv = e;
 	
 		curenv->env_status = ENV_RUNNING;
 		curenv->env_runs++;
+		
 		lcr3(PADDR(curenv->env_pgdir));
 	}
 
 	
-
+	unlock_kernel();
 	
 	env_pop_tf(&(curenv->env_tf));
+	
 
 
 
