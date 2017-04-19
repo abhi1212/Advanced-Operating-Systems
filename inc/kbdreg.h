@@ -22,7 +22,11 @@
 #define	 KBS_WARM	0x04	/* kbd input buffer low */
 #define	 KBS_OCMD	0x08	/* kbd output buffer has command */
 #define	 KBS_NOSEC	0x10	/* kbd security lock not engaged */
+<<<<<<< HEAD
 #define	 KBS_TERR	0x20	/* kbd transmission error */
+=======
+#define	 KBS_TERR	0x20	/* kbd transmission error or from mouse */
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 #define	 KBS_RERR	0x40	/* kbd receive error */
 #define	 KBS_PERR	0x80	/* kbd parity error */
 

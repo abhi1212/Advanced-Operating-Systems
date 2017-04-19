@@ -61,10 +61,17 @@ stab_binsearch(const struct Stab *stabs, int *region_left, int *region_right,
 	       int type, uintptr_t addr)
 {
 	int l = *region_left, r = *region_right, any_matches = 0;
+<<<<<<< HEAD
 	
 	while (l <= r) {
 		int true_m = (l + r) / 2, m = true_m;
 		
+=======
+
+	while (l <= r) {
+		int true_m = (l + r) / 2, m = true_m;
+
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 		// search for earliest stab with right type
 		while (m >= l && stabs[m].n_type != type)
 			m--;
@@ -142,19 +149,35 @@ debuginfo_eip(uintptr_t addr, struct Eipdebuginfo *info)
 		// Make sure this memory is valid.
 		// Return -1 if it is not.  Hint: Call user_mem_check.
 		// LAB 3: Your code here.
+<<<<<<< HEAD
 		if(user_mem_check(curenv, usd, sizeof(struct UserStabData), PTE_U | PTE_P))
 			return -1; 
 
+=======
+		user_mem_check(curenv,usd,sizeof(struct UserStabData),PTE_U|PTE_P);
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 		stabs = usd->stabs;
 		stab_end = usd->stab_end;
 		stabstr = usd->stabstr;
 		stabstr_end = usd->stabstr_end;
 
 		// Make sure the STABS and string table memory is valid.
+<<<<<<< HEAD
 		// LAB 3: Your code here. 
 		if ((user_mem_check(curenv, stabs, stab_end - stabs, PTE_U | PTE_P)) ||
 		    (user_mem_check(curenv, stabstr, stabstr_end - stabstr, PTE_U | PTE_P)) )
 			return -1; 
+=======
+		// LAB 3: Your code here.
+		
+		if(user_mem_check(curenv,stabs,sizeof(struct Stab),PTE_U|PTE_P))
+		return -1;
+	
+		if(user_mem_check(curenv, stabstr, stabstr_end-stabstr, PTE_U|PTE_P))
+		return -1;
+		
+		
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 	}
 
 	// String table validity checks
@@ -165,7 +188,11 @@ debuginfo_eip(uintptr_t addr, struct Eipdebuginfo *info)
 	// 'eip'.  First, we find the basic source file containing 'eip'.
 	// Then, we look in that source file for the function.  Then we look
 	// for the line number.
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 	// Search the entire set of stabs for the source file (type N_SO).
 	lfile = 0;
 	rfile = (stab_end - stabs) - 1;
@@ -173,10 +200,13 @@ debuginfo_eip(uintptr_t addr, struct Eipdebuginfo *info)
 	if (lfile == 0)
 		return -1;
 
+<<<<<<< HEAD
 	info->eip_file = stabstr + stabs[lfile].n_strx;
 	if (info->eip_file[0] == '{') 
 		info->eip_file = stabstr + stabs[lfile+1].n_strx;
 
+=======
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 	// Search within that file's stabs for the function definition
 	// (N_FUN).
 	lfun = lfile;
@@ -203,7 +233,11 @@ debuginfo_eip(uintptr_t addr, struct Eipdebuginfo *info)
 	// Ignore stuff after the colon.
 	info->eip_fn_namelen = strfind(info->eip_fn_name, ':') - info->eip_fn_name;
 
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 	// Search within [lline, rline] for the line number stab.
 	// If found, set info->eip_line to the right line number.
 	// If not found, return -1.
@@ -212,6 +246,7 @@ debuginfo_eip(uintptr_t addr, struct Eipdebuginfo *info)
 	//	There's a particular stabs type used for line numbers.
 	//	Look at the STABS documentation and <inc/stab.h> to find
 	//	which one.
+<<<<<<< HEAD
 	
 	stab_binsearch(stabs, &lline, &rline, N_SLINE, addr);
 	if (rline >= lline)
@@ -221,6 +256,11 @@ debuginfo_eip(uintptr_t addr, struct Eipdebuginfo *info)
 	     info->eip_fn_namelen, info->eip_fn_name,
 	     addr == info->eip_fn_addr ? 0:addr);
 	
+=======
+	// Your code here.
+
+
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 	// Search backwards from the line number for the relevant filename
 	// stab.
 	// We can't just use the "lfile" stab because inlined functions
@@ -241,6 +281,10 @@ debuginfo_eip(uintptr_t addr, struct Eipdebuginfo *info)
 		     lline < rfun && stabs[lline].n_type == N_PSYM;
 		     lline++)
 			info->eip_fn_narg++;
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 	return 0;
 }

@@ -4,7 +4,10 @@
 #include <inc/memlayout.h>
 #include <inc/trap.h>
 
+<<<<<<< HEAD
 #include <kern/picirq.h>
+=======
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 
 
 ###################################################################
@@ -47,6 +50,7 @@
 /*
  * Lab 3: Your code here for generating entry points for the different traps.
  */
+<<<<<<< HEAD
 
 TRAPHANDLER_NOEC(thdlr0, 0)
 TRAPHANDLER_NOEC(thdlr1, 1)
@@ -308,17 +312,49 @@ TRAPHANDLER_NOEC(thdlr255, 255)
 /*
  * Lab 3: Your code here for _alltraps
  */
+=======
+TRAPHANDLER_NOEC(divide_zero,T_DIVIDE)
+TRAPHANDLER_NOEC(brkpoint,T_BRKPT)
+TRAPHANDLER(no_seg,T_SEGNP)
+TRAPHANDLER_NOEC(debug,T_DEBUG)
+TRAPHANDLER_NOEC(nmi,T_NMI)
+TRAPHANDLER_NOEC(oflow,T_OFLOW)
+TRAPHANDLER_NOEC(bound,T_BOUND)
+TRAPHANDLER_NOEC(illop,T_ILLOP)
+TRAPHANDLER_NOEC(device,T_DEVICE)
+TRAPHANDLER(dblflt,T_DBLFLT)
+TRAPHANDLER(tss, T_TSS)
+
+TRAPHANDLER(stack, T_STACK)
+TRAPHANDLER(gpflt, T_GPFLT)
+TRAPHANDLER(pgflt, T_PGFLT)
+
+TRAPHANDLER_NOEC(fperr, T_FPERR)
+TRAPHANDLER(align, T_ALIGN)
+TRAPHANDLER_NOEC(mchk, T_MCHK)
+TRAPHANDLER_NOEC(simderr, T_SIMDERR)
+
+
+
+TRAPHANDLER_NOEC(syscalls, T_SYSCALL)
+
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 
 .globl _alltraps
 _alltraps:
 	pushl %ds
+<<<<<<< HEAD
         pushl %es
+=======
+    pushl %es
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 	pushal
 
 	movw $GD_KD, %ax
 	movw %ax, %ds
 	movw %ax, %es 
 
+<<<<<<< HEAD
         pushl %esp  /* trap(%esp) */
         call trap
 
@@ -593,3 +629,20 @@ trap_handlers:
 	.long thdlr253
 	.long thdlr254
 	.long thdlr255
+=======
+    pushl %esp  /* trap(%esp) */
+    call trap
+
+
+
+
+
+
+
+
+
+/*
+ * Lab 3: Your code here for _alltraps
+ */
+
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5

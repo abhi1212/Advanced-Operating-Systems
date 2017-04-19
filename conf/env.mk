@@ -14,13 +14,17 @@ V = @
 #
 # GCCPREFIX=''
 
+<<<<<<< HEAD
 # build on cygwin with following
 KERNEL_NAME=$(shell uname -s)
 ifeq ($(KERNEL_NAME),Linux)
+=======
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 # If the makefile cannot find your QEMU binary, uncomment the
 # following line and set it to the full path to QEMU.
 #
 # QEMU=
+<<<<<<< HEAD
 #QEMU=/usr/local/qemuose/bin/qemu
 #QEMUEXTRA=-nographic
 else
@@ -29,3 +33,5 @@ endif
 
 GCCPREFIX=$(CROSS_COMPILE)
 
+=======
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5

@@ -64,7 +64,10 @@
 #define PTE_D		0x040	// Dirty
 #define PTE_PS		0x080	// Page Size
 #define PTE_G		0x100	// Global
+<<<<<<< HEAD
 #define PTE_COW		0x800	// Avail for system programmer's use
+=======
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 
 // The PTE_AVAIL bits aren't used by the kernel or interpreted by the
 // hardware, so user processes are allowed to set them arbitrarily.
@@ -159,18 +162,30 @@ struct Segdesc {
 	unsigned sd_dpl : 2;        // Descriptor Privilege Level
 	unsigned sd_p : 1;          // Present
 	unsigned sd_lim_19_16 : 4;  // High bits of segment limit
+<<<<<<< HEAD
 	unsigned sd_avl : 1;        // Unused (available for software use)
+=======
+	unsigneFd sd_avl : 1;        // Unused (available for software use)
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 	unsigned sd_rsv1 : 1;       // Reserved
 	unsigned sd_db : 1;         // 0 = 16-bit segment, 1 = 32-bit segment
 	unsigned sd_g : 1;          // Granularity: limit scaled by 4K when set
 	unsigned sd_base_31_24 : 8; // High bits of segment base address
 };
 // Null segment
+<<<<<<< HEAD
 #define SEG_NULL	(struct Segdesc){ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 // Segment that is loadable but faults when used
 #define SEG_FAULT	(struct Segdesc){ 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0 }
 // Normal segment
 #define SEG(type, base, lim, dpl) (struct Segdesc)			\
+=======
+#define SEG_NULL	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+// Segment that is loadable but faults when used
+#define SEG_FAULT	{ 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0 }
+// Normal segment
+#define SEG(type, base, lim, dpl) 					\
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 { ((lim) >> 12) & 0xffff, (base) & 0xffff, ((base) >> 16) & 0xff,	\
     type, 1, dpl, 1, (unsigned) (lim) >> 28, 0, 0, 1, 1,		\
     (unsigned) (base) >> 24 }

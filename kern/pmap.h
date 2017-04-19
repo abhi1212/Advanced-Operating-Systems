@@ -12,7 +12,11 @@ struct Env;
 
 extern char bootstacktop[], bootstack[];
 
+<<<<<<< HEAD
 extern struct Page *pages;
+=======
+extern struct PageInfo *pages;
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 extern size_t npages;
 
 extern pde_t *kern_pgdir;
@@ -54,12 +58,21 @@ enum {
 void	mem_init(void);
 
 void	page_init(void);
+<<<<<<< HEAD
 struct Page *page_alloc(int alloc_flags);
 void	page_free(struct Page *pp);
 int	page_insert(pde_t *pgdir, struct Page *pp, void *va, int perm);
 void	page_remove(pde_t *pgdir, void *va);
 struct Page *page_lookup(pde_t *pgdir, void *va, pte_t **pte_store);
 void	page_decref(struct Page *pp);
+=======
+struct PageInfo *page_alloc(int alloc_flags);
+void	page_free(struct PageInfo *pp);
+int	page_insert(pde_t *pgdir, struct PageInfo *pp, void *va, int perm);
+void	page_remove(pde_t *pgdir, void *va);
+struct PageInfo *page_lookup(pde_t *pgdir, void *va, pte_t **pte_store);
+void	page_decref(struct PageInfo *pp);
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 
 void	tlb_invalidate(pde_t *pgdir, void *va);
 
@@ -67,12 +80,20 @@ int	user_mem_check(struct Env *env, const void *va, size_t len, int perm);
 void	user_mem_assert(struct Env *env, const void *va, size_t len, int perm);
 
 static inline physaddr_t
+<<<<<<< HEAD
 page2pa(struct Page *pp)
+=======
+page2pa(struct PageInfo *pp)
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 {
 	return (pp - pages) << PGSHIFT;
 }
 
+<<<<<<< HEAD
 static inline struct Page*
+=======
+static inline struct PageInfo*
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 pa2page(physaddr_t pa)
 {
 	if (PGNUM(pa) >= npages)
@@ -81,7 +102,11 @@ pa2page(physaddr_t pa)
 }
 
 static inline void*
+<<<<<<< HEAD
 page2kva(struct Page *pp)
+=======
+page2kva(struct PageInfo *pp)
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 {
 	return KADDR(page2pa(pp));
 }

@@ -16,10 +16,13 @@
 #include <inc/env.h>
 #include <inc/memlayout.h>
 #include <inc/syscall.h>
+<<<<<<< HEAD
 #include <inc/trap.h>
 #include <inc/fs.h>
 #include <inc/fd.h>
 #include <inc/args.h>
+=======
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 
 #define USED(x)		(void)(x)
 
@@ -30,14 +33,21 @@ void	umain(int argc, char **argv);
 extern const char *binaryname;
 extern const volatile struct Env *thisenv;
 extern const volatile struct Env envs[NENV];
+<<<<<<< HEAD
 extern const volatile struct Page pages[];
+=======
+extern const volatile struct PageInfo pages[];
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 
 // exit.c
 void	exit(void);
 
+<<<<<<< HEAD
 // pgfault.c
 void	set_pgfault_handler(void (*handler)(struct UTrapframe *utf));
 
+=======
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 // readline.c
 char*	readline(const char *buf);
 
@@ -46,6 +56,7 @@ void	sys_cputs(const char *string, size_t len);
 int	sys_cgetc(void);
 envid_t	sys_getenvid(void);
 int	sys_env_destroy(envid_t);
+<<<<<<< HEAD
 void	sys_yield(void);
 static envid_t sys_exofork(void);
 int	sys_env_set_status(envid_t env, int status);
@@ -105,6 +116,9 @@ int	pageref(void *addr);
 // spawn.c
 envid_t	spawn(const char *program, const char **argv);
 envid_t	spawnl(const char *program, const char *arg0, ...);
+=======
+
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 
 
 /* File open modes */

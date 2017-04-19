@@ -10,7 +10,10 @@
 #include <kern/trap.h>
 #include <kern/syscall.h>
 #include <kern/console.h>
+<<<<<<< HEAD
 #include <kern/sched.h>
+=======
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 
 // Print a string to the system console.
 // The string is exactly 'len' characters long.
@@ -20,6 +23,7 @@ sys_cputs(const char *s, size_t len)
 {
 	// Check that the user has permission to read memory [s, s+len).
 	// Destroy the environment if not.
+<<<<<<< HEAD
 
 	// LAB 3: Your code here.
 	user_mem_assert(curenv, s, len, PTE_P | PTE_U);
@@ -30,6 +34,14 @@ sys_cputs(const char *s, size_t len)
 
 	// Print the string supplied by the user.
 	cprintf("%.*s", len, s);
+=======
+    user_mem_assert(curenv, s, len, PTE_U);
+	// LAB 3: Your code here.
+
+	// Print the string supplied by the user.
+	cprintf("%.*s", len, s);
+
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 }
 
 // Read a character from the system console without blocking.
@@ -60,10 +72,18 @@ sys_env_destroy(envid_t envid)
 
 	if ((r = envid2env(envid, &e, 1)) < 0)
 		return r;
+<<<<<<< HEAD
+=======
+	if (e == curenv)
+		cprintf("[%08x] exiting gracefully\n", curenv->env_id);
+	else
+		cprintf("[%08x] destroying %08x\n", curenv->env_id, e->env_id);
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 	env_destroy(e);
 	return 0;
 }
 
+<<<<<<< HEAD
 // Deschedule current environment and pick a different one to run.
 static void
 sys_yield(void)
@@ -441,6 +461,8 @@ sys_ipc_recv(void *dstva)
 	return 0;
 }
 
+=======
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 // Dispatches to the correct kernel function, passing the arguments.
 int32_t
 syscall(uint32_t syscallno, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, uint32_t a5)
@@ -448,6 +470,7 @@ syscall(uint32_t syscallno, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, 
 	// Call the function corresponding to the 'syscallno' parameter.
 	// Return any appropriate return value.
 	// LAB 3: Your code here.
+<<<<<<< HEAD
 	//
 	// TBD: gain 10+ percent of performance improvement 
 	// by using goto-label-array.
@@ -488,5 +511,33 @@ syscall(uint32_t syscallno, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, 
 		panic("syscall not implemented");
 	}
 	return 0;
+=======
+
+
+
+//	SYS_cputs = 0,
+//	SYS_cgetc,
+//	SYS_getenvid,
+//	SYS_env_destroy,al
+int rval=0;
+	switch(syscallno){
+		case SYS_cputs:
+			sys_cputs((char *)a1, a2);
+			rval = a2;
+			break;
+		case SYS_cgetc:
+			rval = sys_cgetc();
+			break;
+		case SYS_getenvid:
+			rval = sys_getenvid();
+			break;
+		case SYS_env_destroy:
+			rval = sys_env_destroy(a1);
+			break;
+		default:
+			return -E_INVAL; 
+	}
+	return rval;
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 }
 

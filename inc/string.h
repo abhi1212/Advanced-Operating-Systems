@@ -15,7 +15,11 @@ char *	strchr(const char *s, char c);
 char *	strfind(const char *s, char c);
 
 void *	memset(void *dst, int c, size_t len);
+<<<<<<< HEAD
 /* no memcpy - use memmove instead */
+=======
+void *	memcpy(void *dst, const void *src, size_t len);
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 void *	memmove(void *dst, const void *src, size_t len);
 int	memcmp(const void *s1, const void *s2, size_t len);
 void *	memfind(const void *s, int c, size_t len);

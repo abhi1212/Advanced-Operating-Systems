@@ -49,8 +49,15 @@ endif
 
 # try to infer the correct QEMU
 ifndef QEMU
+<<<<<<< HEAD
 QEMU := $(shell if which qemu > /dev/null; \
 	then echo qemu; exit; \
+=======
+QEMU := $(shell if which qemu >/dev/null 2>&1; \
+	then echo qemu; exit; \
+        elif which qemu-system-i386 >/dev/null 2>&1; \
+        then echo qemu-system-i386; exit; \
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 	else \
 	qemu=/Applications/Q.app/Contents/MacOS/i386-softmmu.app/Contents/MacOS/i386-softmmu; \
 	if test -x $$qemu; then echo $$qemu; exit; fi; fi; \
@@ -83,7 +90,16 @@ PERL	:= perl
 # Only optimize to -O1 to discourage inlining, which complicates backtraces.
 CFLAGS := $(CFLAGS) $(DEFS) $(LABDEFS) -O1 -fno-builtin -I$(TOP) -MD
 CFLAGS += -fno-omit-frame-pointer
+<<<<<<< HEAD
 CFLAGS += -Wall -Wno-format -Wno-unused -Werror -gstabs -m32
+=======
+CFLAGS += -std=gnu99
+CFLAGS += -static
+CFLAGS += -Wall -Wno-format -Wno-unused -Werror -gstabs -m32
+# -fno-tree-ch prevented gcc from sometimes reordering read_ebp() before
+# mon_backtrace()'s function prologue on gcc version: (Debian 4.7.2-5) 4.7.2
+CFLAGS += -fno-tree-ch
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 
 # Add -fno-stack-protector if the option exists.
 CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
@@ -116,7 +132,19 @@ all:
 KERN_CFLAGS := $(CFLAGS) -DJOS_KERNEL -gstabs
 USER_CFLAGS := $(CFLAGS) -DJOS_USER -gstabs
 
+<<<<<<< HEAD
 
+=======
+# Update .vars.X if variable X has changed since the last make run.
+#
+# Rules that use variable X should depend on $(OBJDIR)/.vars.X.  If
+# the variable's value has changed, this will update the vars file and
+# force a rebuild of the rule that depends on it.
+$(OBJDIR)/.vars.%: FORCE
+	$(V)echo "$($*)" | cmp -s $@ || echo "$($*)" > $@
+.PRECIOUS: $(OBJDIR)/.vars.%
+.PHONY: FORCE
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 
 
 # Include Makefrags for subdirectories
@@ -124,6 +152,7 @@ include boot/Makefrag
 include kern/Makefrag
 include lib/Makefrag
 include user/Makefrag
+<<<<<<< HEAD
 include fs/Makefrag
 
 # Note: qemu 0.12.5 no option -D
@@ -148,11 +177,33 @@ qemu: $(IMAGES) .gdbinit
 	$(QEMU) $(QEMUOPTS)
 
 qemu-nox: $(IMAGES) .gdbinit
+=======
+
+
+QEMUOPTS = -drive file=$(OBJDIR)/kern/kernel.img,index=0,media=disk,format=raw -serial mon:stdio -gdb tcp::$(GDBPORT)
+QEMUOPTS += $(shell if $(QEMU) -nographic -help | grep -q '^-D '; then echo '-D qemu.log'; fi)
+IMAGES = $(OBJDIR)/kern/kernel.img
+QEMUOPTS += $(QEMUEXTRA)
+
+.gdbinit: .gdbinit.tmpl
+	sed "s/localhost:1234/localhost:$(GDBPORT)/" < $^ > $@
+
+gdb:
+	gdb -n -x .gdbinit
+
+pre-qemu: .gdbinit
+
+qemu: $(IMAGES) pre-qemu
+	$(QEMU) $(QEMUOPTS)
+
+qemu-nox: $(IMAGES) pre-qemu
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 	@echo "***"
 	@echo "*** Use Ctrl-a x to exit qemu"
 	@echo "***"
 	$(QEMU) -nographic $(QEMUOPTS)
 
+<<<<<<< HEAD
 qemu-gdb: $(IMAGES) .gdbinit
 	@echo "***"
 	@echo "*** Now run 'gdb'." 1>&2
@@ -162,6 +213,17 @@ qemu-gdb: $(IMAGES) .gdbinit
 qemu-nox-gdb: $(IMAGES) .gdbinit
 	@echo "***"
 	@echo "*** Now run 'gdb'." 1>&2
+=======
+qemu-gdb: $(IMAGES) pre-qemu
+	@echo "***"
+	@echo "*** Now run 'make gdb'." 1>&2
+	@echo "***"
+	$(QEMU) $(QEMUOPTS) -S
+
+qemu-nox-gdb: $(IMAGES) pre-qemu
+	@echo "***"
+	@echo "*** Now run 'make gdb'." 1>&2
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 	@echo "***"
 	$(QEMU) -nographic $(QEMUOPTS) -S
 
@@ -176,7 +238,14 @@ clean:
 	rm -rf $(OBJDIR) .gdbinit jos.in qemu.log
 
 realclean: clean
+<<<<<<< HEAD
 	rm -rf lab$(LAB).tar.gz jos.out
+=======
+	rm -rf lab$(LAB).tar.gz \
+		jos.out $(wildcard jos.out.*) \
+		qemu.pcap $(wildcard qemu.pcap.*) \
+		myapi.key
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 
 distclean: realclean
 	rm -rf conf/gcc.mk
@@ -185,6 +254,7 @@ ifneq ($(V),@)
 GRADEFLAGS += -v
 endif
 
+<<<<<<< HEAD
 grade: $(LABSETUP)grade-lab$(LAB).sh
 	@echo $(MAKE) clean
 	@$(MAKE) clean || \
@@ -200,6 +270,50 @@ tarball:
 	@if test "$$(git symbolic-ref HEAD)" != refs/heads/lab$(LAB); then \
 		git branch; \
 		read -p "You are not on the lab$(LAB) branch.  Handin the current branch? [y/N] " r; \
+=======
+grade:
+	@echo $(MAKE) clean
+	@$(MAKE) clean || \
+	  (echo "'make clean' failed.  HINT: Do you have another running instance of JOS?" && exit 1)
+	./grade-lab$(LAB) $(GRADEFLAGS)
+
+git-handin: handin-check
+	@if test -n "`git config remote.handin.url`"; then \
+		echo "Hand in to remote repository using 'git push handin HEAD' ..."; \
+		if ! git push -f handin HEAD; then \
+            echo ; \
+			echo "Hand in failed."; \
+			echo "As an alternative, please run 'make tarball'"; \
+			echo "and visit http://pdos.csail.mit.edu/6.828/submit/"; \
+			echo "to upload lab$(LAB)-handin.tar.gz.  Thanks!"; \
+			false; \
+		fi; \
+    else \
+		echo "Hand-in repository is not configured."; \
+		echo "Please run 'make handin-prep' first.  Thanks!"; \
+		false; \
+	fi
+
+WEBSUB := https://6828.scripts.mit.edu/2016/handin.py
+
+handin: tarball-pref myapi.key
+	@SUF=$(LAB); \
+	test -f .suf && SUF=`cat .suf`; \
+	curl -f -F file=@lab$$SUF-handin.tar.gz -F key=\<myapi.key $(WEBSUB)/upload \
+	    > /dev/null || { \
+		echo ; \
+		echo Submit seems to have failed.; \
+		echo Please go to $(WEBSUB)/ and upload the tarball manually.; }
+
+handin-check:
+	@if ! test -d .git; then \
+		echo No .git directory, is this a git repository?; \
+		false; \
+	fi
+	@if test "$$(git symbolic-ref HEAD)" != refs/heads/lab$(LAB); then \
+		git branch; \
+		read -p "You are not on the lab$(LAB) branch.  Hand-in the current branch? [y/N] " r; \
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 		test "$$r" = y; \
 	fi
 	@if ! git diff-files --quiet || ! git diff-index --quiet --cached HEAD; then \
@@ -213,6 +327,7 @@ tarball:
 		read -p "Untracked files will not be handed in.  Continue? [y/N] " r; \
 		test "$$r" = y; \
 	fi
+<<<<<<< HEAD
 	git archive --format=tar HEAD | gzip > lab$(LAB)-handin.tar.gz
 
 # For test runs
@@ -235,6 +350,77 @@ run-%-nox: .gdbinit
 
 run-%: .gdbinit
 	$(V)$(MAKE) --no-print-directory prep-$*
+=======
+
+UPSTREAM := $(shell git remote -v | grep "pdos.csail.mit.edu/6.828/2016/jos.git (fetch)" | awk '{split($$0,a," "); print a[1]}')
+
+tarball: handin-check
+	git archive --format=tar HEAD > lab$(LAB)-handin.tar
+	git diff $(UPSTREAM)/lab$(LAB) > /tmp/lab$(LAB)diff.patch
+	tar -rf lab$(LAB)-handin.tar /tmp/lab$(LAB)diff.patch
+	gzip -c lab$(LAB)-handin.tar > lab$(LAB)-handin.tar.gz
+	rm lab$(LAB)-handin.tar
+	rm /tmp/lab$(LAB)diff.patch
+
+tarball-pref: handin-check
+	@SUF=$(LAB); \
+	if test $(LAB) -eq 3 -o $(LAB) -eq 4; then \
+		read -p "Which part would you like to submit? [a, b, c (lab 4 only)]" p; \
+		if test "$$p" != a -a "$$p" != b; then \
+			if test ! $(LAB) -eq 4 -o ! "$$p" = c; then \
+				echo "Bad part \"$$p\""; \
+				exit 1; \
+			fi; \
+		fi; \
+		SUF="$(LAB)$$p"; \
+		echo $$SUF > .suf; \
+	else \
+		rm -f .suf; \
+	fi; \
+	git archive --format=tar HEAD > lab$(LAB)-handin.tar
+	git diff $(UPSTREAM)/lab$(LAB) > /tmp/lab$(LAB)diff.patch
+	tar -rf lab$(LAB)-handin.tar /tmp/lab$(LAB)diff.patch
+	gzip -c lab$(LAB)-handin.tar > lab$(LAB)-handin.tar.gz
+	rm lab$(LAB)-handin.tar
+	rm /tmp/lab$(LAB)diff.patch
+
+myapi.key:
+	@echo Get an API key for yourself by visiting $(WEBSUB)/
+	@read -p "Please enter your API key: " k; \
+	if test `echo -n "$$k" |wc -c` = 32 ; then \
+		TF=`mktemp -t tmp.XXXXXX`; \
+		if test "x$$TF" != "x" ; then \
+			echo -n "$$k" > $$TF; \
+			mv -f $$TF $@; \
+		else \
+			echo mktemp failed; \
+			false; \
+		fi; \
+	else \
+		echo Bad API key: $$k; \
+		echo An API key should be 32 characters long.; \
+		false; \
+	fi;
+
+#handin-prep:
+#	@./handin-prep
+
+# For test runs
+
+prep-%:
+	$(V)$(MAKE) "INIT_CFLAGS=${INIT_CFLAGS} -DTEST=`case $* in *_*) echo $*;; *) echo user_$*;; esac`" $(IMAGES)
+
+run-%-nox-gdb: prep-% pre-qemu
+	$(QEMU) -nographic $(QEMUOPTS) -S
+
+run-%-gdb: prep-% pre-qemu
+	$(QEMU) $(QEMUOPTS) -S
+
+run-%-nox: prep-% pre-qemu
+	$(QEMU) -nographic $(QEMUOPTS)
+
+run-%: prep-% pre-qemu
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 	$(QEMU) $(QEMUOPTS)
 
 # This magic automatically generates makefile dependencies
@@ -251,4 +437,8 @@ always:
 	@:
 
 .PHONY: all always \
+<<<<<<< HEAD
 	handin tarball clean realclean distclean grade
+=======
+	handin git-handin tarball tarball-pref clean realclean distclean grade handin-prep handin-check
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5

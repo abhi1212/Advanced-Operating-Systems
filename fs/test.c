@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 #include <inc/x86.h>
 #include <inc/string.h>
 
@@ -43,19 +46,30 @@ fs_test(void)
 	cprintf("file_get_block is good\n");
 
 	*(volatile char*)blk = *(volatile char*)blk;
+<<<<<<< HEAD
 	assert((vpt[PGNUM(blk)] & PTE_D));
 	file_flush(f);
 	assert(!(vpt[PGNUM(blk)] & PTE_D));
+=======
+	assert((uvpt[PGNUM(blk)] & PTE_D));
+	file_flush(f);
+	assert(!(uvpt[PGNUM(blk)] & PTE_D));
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 	cprintf("file_flush is good\n");
 
 	if ((r = file_set_size(f, 0)) < 0)
 		panic("file_set_size: %e", r);
 	assert(f->f_direct[0] == 0);
+<<<<<<< HEAD
 	assert(!(vpt[PGNUM(f)] & PTE_D));
+=======
+	assert(!(uvpt[PGNUM(f)] & PTE_D));
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 	cprintf("file_truncate is good\n");
 
 	if ((r = file_set_size(f, strlen(msg))) < 0)
 		panic("file_set_size 2: %e", r);
+<<<<<<< HEAD
 	assert(!(vpt[PGNUM(f)] & PTE_D));
 	if ((r = file_get_block(f, 0, &blk)) < 0)
 		panic("file_get_block 2: %e", r);
@@ -64,5 +78,15 @@ fs_test(void)
 	file_flush(f);
 	assert(!(vpt[PGNUM(blk)] & PTE_D));
 	assert(!(vpt[PGNUM(f)] & PTE_D));
+=======
+	assert(!(uvpt[PGNUM(f)] & PTE_D));
+	if ((r = file_get_block(f, 0, &blk)) < 0)
+		panic("file_get_block 2: %e", r);
+	strcpy(blk, msg);
+	assert((uvpt[PGNUM(blk)] & PTE_D));
+	file_flush(f);
+	assert(!(uvpt[PGNUM(blk)] & PTE_D));
+	assert(!(uvpt[PGNUM(f)] & PTE_D));
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 	cprintf("file rewrite is good\n");
 }

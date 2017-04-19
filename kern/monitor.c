@@ -22,6 +22,7 @@ struct Command {
 	int (*func)(int argc, char** argv, struct Trapframe* tf);
 };
 
+<<<<<<< HEAD
 static int
 mon_octal(int argc, char **argv, struct Trapframe *tf);
 
@@ -51,13 +52,26 @@ mon_octal(int argc, char **argv, struct Trapframe *tf)
 	cprintf("octal(%u)=%o(o)\n", num, num);
 	return 0;
 }
+=======
+static struct Command commands[] = {
+	{ "help", "Display this list of commands", mon_help },
+	{ "kerninfo", "Display information about the kernel", mon_kerninfo },
+	{ "backtrace", "Display backtrace",  mon_backtrace },
+};
+
+/***** Implementations of basic kernel monitor commands *****/
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 
 int
 mon_help(int argc, char **argv, struct Trapframe *tf)
 {
 	int i;
 
+<<<<<<< HEAD
 	for (i = 0; i < NCOMMANDS; i++)
+=======
+	for (i = 0; i < ARRAY_SIZE(commands); i++)
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 		cprintf("%s - %s\n", commands[i].name, commands[i].desc);
 	return 0;
 }
@@ -65,14 +79,22 @@ mon_help(int argc, char **argv, struct Trapframe *tf)
 int
 mon_kerninfo(int argc, char **argv, struct Trapframe *tf)
 {
+<<<<<<< HEAD
 	extern char entry[], etext[], edata[], end[];
 
 	cprintf("Special kernel symbols:\n");
+=======
+	extern char _start[], entry[], etext[], edata[], end[];
+
+	cprintf("Special kernel symbols:\n");
+	cprintf("  _start                  %08x (phys)\n", _start);
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 	cprintf("  entry  %08x (virt)  %08x (phys)\n", entry, entry - KERNBASE);
 	cprintf("  etext  %08x (virt)  %08x (phys)\n", etext, etext - KERNBASE);
 	cprintf("  edata  %08x (virt)  %08x (phys)\n", edata, edata - KERNBASE);
 	cprintf("  end    %08x (virt)  %08x (phys)\n", end, end - KERNBASE);
 	cprintf("Kernel executable memory footprint: %dKB\n",
+<<<<<<< HEAD
 		(end-entry+1023)/1024);
 	return 0;
 }
@@ -110,6 +132,32 @@ mon_backtrace(int argc, char **argv, struct Trapframe *tf)
 	} while(p); // && *p != 0);
 
 	return 0;
+=======
+		ROUNDUP(end - entry, 1024) / 1024);
+	return 0;
+}
+
+int
+mon_backtrace(int argc, char **argv, struct Trapframe *tf)
+{
+
+	uint32_t *pointer;
+	pointer=(uint32_t *) read_ebp();
+
+	struct Eipdebuginfo info;
+	while(pointer)
+	{
+		cprintf("ebp %08x eip %08x args %08x %08x %08x %08x %08x\n",pointer, pointer[1], pointer[2], pointer[3], pointer[4], pointer[5], pointer[6]);
+	    //cprintf("ebp %08x eip %08x args %08x %08x  %08x \n",pointer, &pointer[1], &pointer[2], &pointer[3], pointer[4]);
+
+	    debuginfo_eip(pointer[1],&info);
+	    cprintf("%s:%d: %.*s+%d\n",info.eip_file,info.eip_line,info.eip_fn_namelen,info.eip_fn_name,(pointer[1]-info.eip_fn_addr));
+	    
+	    //cprintf("\nebp[0] = %x\n",pointer[0]);
+	    pointer=(uint32_t *)pointer[0];
+	}
+return 0;
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 }
 
 
@@ -150,7 +198,11 @@ runcmd(char *buf, struct Trapframe *tf)
 	// Lookup and invoke the command
 	if (argc == 0)
 		return 0;
+<<<<<<< HEAD
 	for (i = 0; i < NCOMMANDS; i++) {
+=======
+	for (i = 0; i < ARRAY_SIZE(commands); i++) {
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 		if (strcmp(argv[0], commands[i].name) == 0)
 			return commands[i].func(argc, argv, tf);
 	}
@@ -176,6 +228,7 @@ monitor(struct Trapframe *tf)
 				break;
 	}
 }
+<<<<<<< HEAD
 
 // return EIP of caller.
 // does not work if inlined.
@@ -187,3 +240,5 @@ read_eip()
 	__asm __volatile("movl 4(%%ebp), %0" : "=r" (callerpc));
 	return callerpc;
 }
+=======
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5

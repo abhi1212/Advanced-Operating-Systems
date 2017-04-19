@@ -6,6 +6,7 @@
 enum {
 	// Kernel error codes -- keep in sync with list in lib/printfmt.c.
 	E_UNSPECIFIED	= 1,	// Unspecified or unknown problem
+<<<<<<< HEAD
 	E_BAD_ENV	= 2,	// Environment doesn't exist or otherwise
 				// cannot be used in requested action
 	E_INVAL		= 3,	// Invalid parameter
@@ -25,6 +26,15 @@ enum {
 	E_FILE_EXISTS	= 13,	// File already exists
 	E_NOT_EXEC	= 14,	// File not a valid executable
 	E_NOT_SUPP	= 15,	// Operation not supported
+=======
+	E_BAD_ENV	,	// Environment doesn't exist or otherwise
+				// cannot be used in requested action
+	E_INVAL		,	// Invalid parameter
+	E_NO_MEM	,	// Request failed due to memory shortage
+	E_NO_FREE_ENV	,	// Attempt to create a new environment beyond
+				// the maximum allowed
+	E_FAULT		,	// Memory fault
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 
 	MAXERROR
 };

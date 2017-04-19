@@ -10,8 +10,13 @@
 
 /*
  * Space or zero padding and a field width are supported for the numeric
+<<<<<<< HEAD
  * formats only. 
  * 
+=======
+ * formats only.
+ *
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
  * The special format %e takes an integer error code
  * and prints a string describing the error.
  * The integer may be positive or negative,
@@ -26,6 +31,7 @@ static const char * const error_string[MAXERROR] =
 	[E_NO_MEM]	= "out of memory",
 	[E_NO_FREE_ENV]	= "out of environments",
 	[E_FAULT]	= "segmentation fault",
+<<<<<<< HEAD
 	[E_IPC_NOT_RECV]= "env is not recving",
 	[E_EOF]		= "unexpected end of file",
 	[E_NO_DISK]	= "no free space on disk",
@@ -35,6 +41,8 @@ static const char * const error_string[MAXERROR] =
 	[E_FILE_EXISTS]	= "file already exists",
 	[E_NOT_EXEC]	= "file is not a valid executable",
 	[E_NOT_SUPP]	= "operation not supported",
+=======
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 };
 
 /*
@@ -117,7 +125,11 @@ vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
 		case '-':
 			padc = '-';
 			goto reswitch;
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 		// flag to pad with 0's instead of spaces
 		case '0':
 			padc = '0';
@@ -214,10 +226,19 @@ vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
 
 		// (unsigned) octal
 		case 'o':
+<<<<<<< HEAD
 			// modified ben
 			num = getuint(&ap, lflag);
 			base = 8;
 			goto number;
+=======
+			// Replace this with your code.
+			putch('X', putdat);
+			putch('X', putdat);
+			putch('X', putdat);
+			break;
+
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 		// pointer
 		case 'p':
 			putch('0', putdat);
@@ -239,7 +260,11 @@ vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
 		case '%':
 			putch(ch, putdat);
 			break;
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 		// unrecognized escape sequence - just print it literally
 		default:
 			putch('%', putdat);

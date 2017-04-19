@@ -10,12 +10,15 @@
 #include <kern/kclock.h>
 #include <kern/env.h>
 #include <kern/trap.h>
+<<<<<<< HEAD
 #include <kern/sched.h>
 #include <kern/picirq.h>
 #include <kern/cpu.h>
 #include <kern/spinlock.h>
 
 static void boot_aps(void);
+=======
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 
 
 void
@@ -41,6 +44,7 @@ i386_init(void)
 	env_init();
 	trap_init();
 
+<<<<<<< HEAD
 	// Lab 4 multiprocessor initialization functions
 	mp_init();
 	lapic_init();
@@ -63,11 +67,14 @@ i386_init(void)
 	// Start fs.
 	ENV_CREATE(fs_fs, ENV_TYPE_FS);
 
+=======
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 #if defined(TEST)
 	// Don't touch -- used by grading script!
 	ENV_CREATE(TEST, ENV_TYPE_USER);
 #else
 	// Touch all you want.
+<<<<<<< HEAD
 	// ENV_CREATE(user_writemotd, ENV_TYPE_USER);
 	// ENV_CREATE(user_testfile, ENV_TYPE_USER);
 	ENV_CREATE(user_icode, ENV_TYPE_USER);
@@ -130,6 +137,15 @@ mp_main(void)
 	lock_kernel();
 	sched_yield();
 }
+=======
+	ENV_CREATE(user_hello, ENV_TYPE_USER);
+#endif // TEST*
+
+	// We only have one user environment for now, so just run it.
+	env_run(&envs[0]);
+}
+
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 
 /*
  * Variable panicstr contains argument to first call to panic; used as flag
@@ -151,10 +167,17 @@ _panic(const char *file, int line, const char *fmt,...)
 	panicstr = fmt;
 
 	// Be extra sure that the machine is in as reasonable state
+<<<<<<< HEAD
 	__asm __volatile("cli; cld");
 
 	va_start(ap, fmt);
 	cprintf("kernel panic on CPU %d at %s:%d: ", cpunum(), file, line);
+=======
+	asm volatile("cli; cld");
+
+	va_start(ap, fmt);
+	cprintf("kernel panic at %s:%d: ", file, line);
+>>>>>>> 71c42ff5f0b3fb34395ce94852f2097724fadaa5
 	vcprintf(fmt, ap);
 	cprintf("\n");
 	va_end(ap);
